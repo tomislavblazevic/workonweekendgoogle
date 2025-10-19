@@ -74,3 +74,9 @@ export function base64ToArrayBuffer(base64: string) {
   }
   return bytes.buffer;
 }
+
+/**
+ * Utility to pause execution for a specified number of milliseconds.
+ * Used for simulating network delays and streaming in mock implementations.
+ */
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

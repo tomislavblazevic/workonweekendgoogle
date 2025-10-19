@@ -33,8 +33,8 @@ code {
   --accent-red: #ff4600;
   --background: var(--gray-900);
   --color: var(--text);
-  scrollbar-color: var(--gray-600) var(--gray-900);
-  scrollbar-width: thin;
+  /* Removed raw 'scrollbar-color' here (unsupported in some browsers); see cross-browser rules appended at the end of the file */
+  /* scrollbar-width is applied conditionally via a feature query later to avoid issues in browsers that don't support it */
   --font-family: 'google sans' 'Space Mono', monospace;
   /* Colors */
   --Neutral-00: #000;
@@ -170,6 +170,9 @@ color: #5e5e5e;
   color: var(--gray-200);
   cursor: pointer;
   flex-grow: 1;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -182,11 +185,15 @@ textarea {
   outline: none;
   font-size: 18px;
   resize: none;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
   user-select: text;
 }
 
 input::placeholder,
 textarea::placeholder {
+  -webkit-user-select: none;
   user-select: none;
   color: var(--Neutral-60);
 }
@@ -214,6 +221,9 @@ button {
   border: none;
   font-size: 16px;
   cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   display: flex;
   align-items: center;
@@ -265,8 +275,8 @@ button .icon {
   display: flex;
   flex-direction: column;
   background: rgba(28, 31, 33, 0); /* var(--Neutral-10) with 85% opacity */
-  /* backdrop-filter: blur(10px); */
-  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  -webkit-backdrop-filter: blur(10px); /* Safari/older WebKit support */
+  backdrop-filter: blur(10px); /* Standard property for supported browsers */
   color: var(--gray-300);
   /* border-right: 1px solid var(--border-stroke); */
   padding-top: 20px;
@@ -313,11 +323,11 @@ gmp-place-details-compact {
 
 @keyframes pulse {
   from {
-    scale: 1 1;
+    transform: scale(1);
   }
 
   to {
-    scale: 1.2 1.2;
+    transform: scale(1.2);
   }
 }
 
@@ -337,6 +347,9 @@ gmp-place-details-compact {
   height: 48px;
   border-radius: 18px;
   border: 1px solid rgba(0, 0, 0, 0);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -491,10 +504,6 @@ gmp-place-details-compact {
   padding-right: 8px;
 }
 
-.prompt-input:disabled {
-  cursor: not-allowed;
-}
-
 .send-button {
   display: flex;
   align-items: center;
@@ -511,6 +520,9 @@ gmp-place-details-compact {
   height: 48px;
   border-radius: 18px;
   border: 1px solid rgba(0, 0, 0, 0);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -1014,8 +1026,8 @@ gmp-place-details-compact {
     border-top: 1px solid var(--border-stroke);
     padding-top: 10px;
     background: rgba(28, 31, 33, 0.85);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 
   .map-panel {
@@ -1131,5 +1143,41 @@ gmp-place-details-compact {
     margin-top: 8px;
     background-color: var(--Neutral-20);
     border-radius: 18px;
+  }
+}
+
+/* Cross-browser scrollbar styling:
+   - WebKit/Blink: use ::-webkit-scrollbar pseudo-elements
+   - Firefox: keep scrollbar-width (already set) and enable scrollbar-color only when supported
+*/
+
+/* WebKit / Blink (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gray-900);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--gray-600);
+  border-radius: 10px;
+  border: 2px solid var(--gray-900);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gray-500);
+}
+
+/* Use scrollbar-color only where supported (feature query prevents applying it in browsers that don't support it) */
+@supports (scrollbar-color: auto) {
+  :root {
+    scrollbar-color: var(--gray-600) var(--gray-900);
+  }
+}
+
+@supports (scrollbar-width: thin) {
+  :root {
+    /* Apply thin scrollbars only where supported (prevents issues in unsupported browsers like older Chrome/Safari) */
+    scrollbar-width: thin;
   }
 }

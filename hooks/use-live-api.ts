@@ -25,11 +25,12 @@
 
 
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { GenAILiveClient } from '../../lib/genai-live-client';
+import { GenAILiveClient } from '../lib/genai-live-client';
+import { MockGenAILiveClient } from '../lib/mock-genai-live-client';
 import { LiveConnectConfig, Modality, LiveServerToolCall } from '@google/genai';
-import { AudioStreamer } from '../../lib/audio-streamer';
-import { audioContext } from '../../lib/utils';
-import VolMeterWorket from '../../lib/worklets/vol-meter';
+import { AudioStreamer } from '../lib/audio-streamer';
+import { audioContext } from '../lib/utils';
+import VolMeterWorket from '../lib/worklets/vol-meter';
 import { useLogStore, useMapStore, useSettings } from '@/lib/state';
 import { GenerateContentResponse, GroundingChunk } from '@google/genai';
 import { ToolContext, toolRegistry } from '@/lib/tools/tool-registry';
@@ -71,7 +72,12 @@ export function useLiveApi({
  padding: [number, number, number, number];
 }): UseLiveApiResults {
  const { model } = useSettings();
- const client = useMemo(() => new GenAILiveClient(apiKey, model), [apiKey, model]);
+ const client = useMemo(() => {
+   const useMockApi = process.env.USE_MOCK_API === 'true';
+   return useMockApi 
+     ? new MockGenAILiveClient(apiKey, model) as unknown as GenAILiveClient
+     : new GenAILiveClient(apiKey, model);
+ }, [apiKey, model]);
 
 
  const audioStreamerRef = useRef<AudioStreamer | null>(null);

@@ -29,15 +29,11 @@ import { LiveAPIProvider } from './contexts/LiveAPIContext';
 // FIX: Correctly import APIProvider as a named export.
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { Map3D, Map3DCameraProps} from './components/map-3d';
+import './App.css';
 import { useMapStore, useLogStore, MapMarker } from './lib/state';
 import { MapController } from './lib/map-controller';
 
-const API_KEY = process.env.GEMINI_API_KEY as string;
-if (typeof API_KEY !== 'string') {
-  throw new Error(
-    'Missing required environment variable: GEMINI_API_KEY'
-  );
-}
+const API_KEY = process.env.GEMINI_API_KEY as string | undefined;
 
 const INITIAL_VIEW_PROPS = {
   center: {
@@ -51,12 +47,29 @@ const INITIAL_VIEW_PROPS = {
   roll: 0
 };
 
+function AppComponent() {
 /**
  * The main application component. It serves as the primary view controller,
  * orchestrating the layout of UI components and reacting to global state changes
  * to update the 3D map.
  */
-function AppComponent() {
+  console.log('AppComponent rendering, API_KEY:', API_KEY ? 'present' : 'missing');
+  
+  if (!API_KEY) {
+    console.log('No API key found, rendering missing key message');
+    return (
+      <div className="missing-key-container">
+        <h2>Missing GEMINI_API_KEY</h2>
+        <p>
+          The application requires the environment variable <code>GEMINI_API_KEY</code> to be set.
+          Please add it to your environment or a .env file and restart the dev server.
+        </p>
+      </div>
+    );
+  }
+  
+  console.log('API key found, proceeding with full app render');
+  
   const [map, setMap] = useState<google.maps.maps3d.Map3DElement | null>(null);
   const placesLib = useMapsLibrary('places');
   const geocodingLib = useMapsLibrary('geocoding');
@@ -289,6 +302,7 @@ function AppComponent() {
     </LiveAPIProvider>
   );
 }
+
 
 
 /**

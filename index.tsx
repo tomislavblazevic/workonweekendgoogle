@@ -21,13 +21,20 @@
 import React, {StrictMode} from 'react';
 import ReactDOM from 'react-dom/client';
 
+console.log('index.tsx: Starting app initialization');
+
 import App from './App';
+import ErrorBoundary from './components/ErrorBoundary';
+
+console.log('index.tsx: Imports completed successfully');
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>
 )

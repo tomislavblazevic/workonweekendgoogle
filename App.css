@@ -1,0 +1,27 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background);
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+.missing-key-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--gray-900);
+  color: white;
+}
+
+.missing-key-container code {
+  background-color: var(--gray-800);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}

@@ -1,0 +1,44 @@
+.errorBoundary {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background);
+  color: var(--text);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 9999;
+}
+
+.errorBoundary h2 {
+  color: var(--accent-red);
+  margin-bottom: 1rem;
+}
+
+.errorDetails {
+  margin-top: 2rem;
+  text-align: left;
+  max-width: 800px;
+  width: 100%;
+}
+
+.errorDetails summary {
+  cursor: pointer;
+  color: var(--accent-blue);
+  margin-bottom: 1rem;
+}
+
+.errorDetails pre {
+  background-color: var(--gray-800);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
