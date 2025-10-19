@@ -1,0 +1,8 @@
+{
+  "name": "Chat with Maps Live",
+  "description": "This interactive demo highlights Gemini and Grounding with Google Maps' ability to engage in real-time, voice-driven conversations. Plan a day trip using natural language and experience how Gemini leverages Google Maps to deliver accurate, up-to-the-minute information.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
