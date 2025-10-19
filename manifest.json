@@ -1,0 +1,32 @@
+{
+  "short_name": "Maps Chat",
+  "name": "Chat with Maps Live",
+  "description": "An interactive day planner using Gemini and Google Maps.",
+  "icons": [
+    {
+      "src": "https://www.gstatic.com/images/branding/product/1x/gemini_48dp.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "https://www.gstatic.com/images/branding/product/1x/gemini_96dp.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "https://www.gstatic.com/images/branding/product/2x/gemini_192dp.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://www.gstatic.com/images/branding/product/2x/gemini_512dp.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1c1f21",
+  "background_color": "#000000",
+  "orientation": "portrait"
+}
