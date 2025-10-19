@@ -246,6 +246,7 @@ function ControlTray({trayRef}: ControlTrayProps) {
           })}
           onClick={handleMicClick}
           title={micButtonTitle}
+          disabled={!connected}
         >
           {!muted ? (
             <span className="material-symbols-outlined filled">mic</span>

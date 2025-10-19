@@ -57,8 +57,12 @@ export class MapController {
   /**
    * Adds a list of markers to the map.
    * @param markers - An array of marker data to be rendered.
+   * @param onMarkerClick - An optional callback to run when a marker is clicked.
    */
-  addMarkers(markers: MapMarker[]) {
+  addMarkers(
+    markers: MapMarker[],
+    onMarkerClick?: (marker: MapMarker) => void,
+  ) {
     for (const markerData of markers) {
       const marker = new this.maps3dLib.Marker3DInteractiveElement({
         position: markerData.position,
@@ -67,6 +71,12 @@ export class MapController {
         title: markerData.label,
         drawsWhenOccluded: true,
       });
+
+      if (onMarkerClick) {
+        marker.style.cursor = 'pointer';
+        marker.addEventListener('click', () => onMarkerClick(markerData));
+      }
+
       this.map.appendChild(marker);
     }
   }

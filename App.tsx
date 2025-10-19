@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 import React, {useCallback, useState, useEffect, useRef} from 'react';
+import { GoogleGenAI } from '@google/genai';
 
 import ControlTray from './components/ControlTray';
 import ErrorScreen from './components/ErrorScreen';
@@ -28,7 +29,7 @@ import { LiveAPIProvider } from './contexts/LiveAPIContext';
 // FIX: Correctly import APIProvider as a named export.
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { Map3D, Map3DCameraProps} from './components/map-3d';
-import { useMapStore } from './lib/state';
+import { useMapStore, useLogStore, MapMarker } from './lib/state';
 import { MapController } from './lib/map-controller';
 
 const API_KEY = process.env.GEMINI_API_KEY as string;
@@ -74,6 +75,12 @@ function AppComponent() {
   const controlTrayRef = useRef<HTMLElement>(null);
   // Padding state is used to ensure map content isn't hidden by UI elements.
   const [padding, setPadding] = useState<[number, number, number, number]>([0.05, 0.05, 0.05, 0.05]);
+
+  // Memoize the AI client instance for one-off generateContent calls
+  const aiClient = useRef<GoogleGenAI | null>(null);
+  useEffect(() => {
+    aiClient.current = new GoogleGenAI({ apiKey: API_KEY });
+  }, []);
 
   // Effect: Instantiate the Geocoder once the library is loaded.
   useEffect(() => {
@@ -162,6 +169,51 @@ function AppComponent() {
     }
   }, [map]);
 
+  const handleMarkerClick = useCallback(async (marker: MapMarker) => {
+    const isEVStation = marker.label.toLowerCase().includes('charging') ||
+                        marker.label.toLowerCase().includes('ev') ||
+                        marker.label.toLowerCase().includes('punionica');
+
+    if (!isEVStation || !aiClient.current) {
+      return;
+    }
+
+    const { addTurn } = useLogStore.getState();
+    addTurn({
+      role: 'system',
+      text: `Simulating real-time satellite data for "${marker.label}" to predict wait time...`,
+      isFinal: true,
+    });
+
+    try {
+      const now = new Date();
+      const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
+      const timeOfDay = now.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+
+      const prompt = `Based on typical usage patterns and simulated real-time satellite data analysis, predict the approximate waiting time at the EV charging station named "${marker.label}" located near latitude ${marker.position.lat} and longitude ${marker.position.lng}. It is currently ${timeOfDay} on a ${dayOfWeek}. Provide a concise estimate and add a notice that the feature is in beta. Your response should only be the prediction. Example: "Approximate wait time is 5-10 minutes. (beta mode)"`;
+
+      const response = await aiClient.current.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt
+      });
+      
+      const prediction = response.text;
+
+      addTurn({
+        role: 'system',
+        text: prediction,
+        isFinal: true,
+      });
+
+    } catch (error) {
+      console.error('Error predicting wait time:', error);
+      addTurn({
+        role: 'system',
+        text: 'Sorry, I was unable to predict the wait time for this location.',
+        isFinal: true,
+      });
+    }
+  }, []);
 
   // Effect: Reactively render markers and routes on the map.
   // This is the core of the component's "reactive" nature. It listens for
@@ -176,7 +228,7 @@ function AppComponent() {
     controller.clearMap();
 
     if (markers.length > 0) {
-      controller.addMarkers(markers);
+      controller.addMarkers(markers, handleMarkerClick);
     }
     
     // Combine all points from markers for framing
@@ -186,7 +238,7 @@ function AppComponent() {
     if (allEntities.length > 0 && !preventAutoFrame) {
       controller.frameEntities(allEntities, padding);
     }
-  }, [markers, padding, preventAutoFrame]); // Re-run when markers or padding change
+  }, [markers, padding, preventAutoFrame, handleMarkerClick]); // Re-run when markers or padding change
 
 
   // Effect: Reactively handle direct camera movement requests.
