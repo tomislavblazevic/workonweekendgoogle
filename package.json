@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mock": "node -e \"process.env.USE_MOCK_API='true'; const cp=require('child_process'); cp.spawn(process.platform==='win32'? 'npm' : 'npm',['run','dev'], { stdio: 'inherit' });\"",
     "build": "vite build",
     "preview": "vite preview"
   },
