@@ -13,7 +13,8 @@ import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 
 
 // TODO - replace with appropriate key
-const API_KEY = process.env.GEMINI_API_KEY
+const API_KEY = process.env.GEMINI_API_KEY;
+const USE_MOCK_API = process.env.USE_MOCK_API === 'true';
 const SYS_INSTRUCTIONS = "You are a helpful assistant that provides concise answers based on the user's query. Provide details for the top 3 results, unless the user requests less. Provide the name and a concise one line description that highlights a unique, interesting, or fun aspect about the place. Do not state addresses. "
 /**
 * Calls the Gemini API with the googleSearch tool to get a grounded response.
@@ -34,6 +35,15 @@ export async function fetchMapsGroundedResponseSDK({
  systemInstruction?: string;
 }): Promise<GenerateContentResponse> {
  if (!API_KEY) {
+   if (USE_MOCK_API) {
+     // Return a small mocked GenerateContentResponse so callers can proceed in
+     // development without a real Gemini API key.
+     console.warn('USE_MOCK_API is enabled — returning mocked SDK grounded response');
+     return Promise.resolve({
+       text: `Mock grounded response for: ${prompt}`,
+       // minimal shape expected by callers — cast to the typed response
+     } as GenerateContentResponse);
+   }
    throw new Error('Missing required environment variable: API_KEY');
  }
 
@@ -97,6 +107,12 @@ export async function fetchMapsGroundedResponseREST({
  systemInstruction?: string;
 }): Promise<GenerateContentResponse> {
  if (!API_KEY) {
+   if (USE_MOCK_API) {
+     console.warn('USE_MOCK_API is enabled — returning mocked REST grounded response');
+     return Promise.resolve({
+       text: `Mock grounded response for: ${prompt}`,
+     } as GenerateContentResponse);
+   }
    throw new Error('Missing required environment variable: GEMINI_API_KEY');
  }
  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
