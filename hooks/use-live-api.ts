@@ -27,6 +27,7 @@
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GenAILiveClient } from '../lib/genai-live-client';
 import { MockGenAILiveClient } from '../lib/mock-genai-live-client';
+import { LiveClient } from '../lib/live-client-types';
 import { LiveConnectConfig, Modality, LiveServerToolCall } from '@google/genai';
 import { AudioStreamer } from '../lib/audio-streamer';
 import { audioContext } from '../lib/utils';
@@ -37,7 +38,7 @@ import { ToolContext, toolRegistry } from '@/lib/tools/tool-registry';
 
 
 export type UseLiveApiResults = {
- client: GenAILiveClient;
+ client: LiveClient;
  setConfig: (config: LiveConnectConfig) => void;
  config: LiveConnectConfig;
  audioStreamer: MutableRefObject<AudioStreamer | null>;
@@ -72,10 +73,10 @@ export function useLiveApi({
  padding: [number, number, number, number];
 }): UseLiveApiResults {
  const { model } = useSettings();
- const client = useMemo(() => {
+ const client = useMemo<LiveClient>(() => {
    const useMockApi = process.env.USE_MOCK_API === 'true';
-   return useMockApi 
-     ? new MockGenAILiveClient(apiKey, model) as unknown as GenAILiveClient
+   return useMockApi
+     ? new MockGenAILiveClient(apiKey, model)
      : new GenAILiveClient(apiKey, model);
  }, [apiKey, model]);
 

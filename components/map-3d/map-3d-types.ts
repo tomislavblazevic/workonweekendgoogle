@@ -47,135 +47,28 @@ declare module '@vis.gl/react-google-maps' {
 }
 
 // temporary fix until @types/google.maps is updated with the latest changes
+// Only augment the google.maps namespace for the `maps3d` pieces we need
+// to avoid duplicating types already provided by `@types/google.maps`.
 declare global {
   namespace google.maps {
-    // FIX: Add missing LatLng interface
-    interface LatLng {
-      lat(): number;
-      lng(): number;
-      toJSON(): {lat: number; lng: number};
-    }
-
-    // FIX: Add missing LatLngLiteral interface
-    interface LatLngLiteral {
-      lat: number;
-      lng: number;
-    }
-
-    // FIX: Add missing LatLngAltitude interface
-    interface LatLngAltitude {
-      lat: number;
-      lng: number;
-      altitude: number;
-      toJSON(): LatLngAltitudeLiteral;
-    }
-
-    // FIX: Add missing LatLngAltitudeLiteral interface
-    interface LatLngAltitudeLiteral {
-      lat: number;
-      lng: number;
-      altitude: number;
-    }
-    
-    // Define the PlacesLibrary interface
+    // Lightweight augmentations for pieces used by the app that aren't
+    // guaranteed to exist in the installed `@types/google.maps` package.
+    // These are minimal and purpose-built to avoid duplicating broad
+    // type declarations from `@types/google.maps`.
     interface PlacesLibrary {
-      Place: typeof places.Place;
-      PlaceContextualElement: any;
-      PlaceContextualListConfigElement: any;
+      PlaceContextualElement?: { new (...args: any[]): any };
+      PlaceContextualListConfigElement?: { new (...args: any[]): any };
     }
 
-    // FIX: Add missing places namespace and Place class definition
-    namespace places {
-      class Place {
-        constructor(options: {id: string});
-        fetchFields(options: {
-          fields: string[];
-        }): Promise<{place: Place}>;
-        location?: LatLng;
-        displayName?: string;
-      }
-    }
-
-    // FIX: Add missing types for the Elevation service.
-    interface ElevationLibrary {
-      ElevationService: {
-        new (): ElevationService;
-      };
-    }
-
-    interface ElevationResult {
-      elevation: number;
-      location: LatLng;
-      resolution: number;
-    }
-
-    interface LocationElevationRequest {
-      locations: LatLngLiteral[];
-    }
-
-    class ElevationService {
-      getElevationForLocations(
-        request: LocationElevationRequest
-      ): Promise<{results: ElevationResult[]}>;
-    }
-
-    // Add missing types for the Geocoding service.
-    interface GeocodingLibrary {
-      Geocoder: {
-        new (): Geocoder;
-      };
-    }
-
-    class Geocoder {
-      geocode(
-        request: GeocoderRequest
-      ): Promise<{results: GeocoderResult[]}>;
-    }
-
-    interface GeocoderRequest {
-      address?: string | null;
-      location?: LatLng | LatLngLiteral;
-      placeId?: string | null;
-    }
-
-    interface GeocoderResult {
-      address_components: GeocoderAddressComponent[];
-      formatted_address: string;
-      geometry: GeocoderGeometry;
-      place_id: string;
-      types: string[];
-    }
-    
-    interface GeocoderAddressComponent {
-      long_name: string;
-      short_name: string;
-      types: string[];
-    }
-
-    interface GeocoderGeometry {
-      location: LatLng;
-      location_type: string;
-      viewport: LatLngBounds;
-    }
-
-    class LatLngBounds {
-      constructor(sw?: LatLng | LatLngLiteral, ne?: LatLng | LatLngLiteral);
-      getCenter(): LatLng;
-      getNorthEast(): LatLng;
-      getSouthWest(): LatLng;
-      // ... and other methods
-    }
-
-    // FIX: Add interface for the maps3d library to provide strong types
     interface Maps3DLibrary {
-      Marker3DInteractiveElement: {
-        new (options: any): HTMLElement;
-      };
+      Marker3DInteractiveElement?: { new (options?: any): any };
     }
-
+    // Interface to expose minimal maps3d element and camera option types used
+    // by this project. Keep these narrow to avoid collisions with the
+    // broader `@types/google.maps` definitions.
     namespace maps3d {
       interface CameraOptions {
-        center?: google.maps.LatLngAltitude | google.maps.LatLngAltitudeLiteral;
+        center?: google.maps.LatLngAltitudeLiteral;
         heading?: number;
         range?: number;
         roll?: number;
@@ -192,22 +85,22 @@ declare global {
         endCamera: CameraOptions;
         durationMillis?: number;
       }
+
       interface Map3DElement extends HTMLElement {
         mode?: 'HYBRID' | 'SATELLITE';
         flyCameraAround: (options: FlyAroundAnimationOptions) => void;
         flyCameraTo: (options: FlyToAnimationOptions) => void;
-        // FIX: Add element properties to be used as attributes in JSX
-        center: google.maps.LatLngAltitude | google.maps.LatLngAltitudeLiteral;
-        heading: number;
-        range: number;
-        roll: number;
-        tilt: number;
+        // Keep attributes permissive to avoid conflicts with core map types
+  center?: google.maps.LatLngAltitudeLiteral;
+        heading?: number;
+        range?: number;
+        roll?: number;
+        tilt?: number;
         defaultUIHidden?: boolean;
       }
 
-      // FIX: Add missing Map3DElementOptions interface
       interface Map3DElementOptions {
-        center?: google.maps.LatLngAltitude | google.maps.LatLngAltitudeLiteral;
+        center?: google.maps.LatLngAltitudeLiteral;
         heading?: number;
         range?: number;
         roll?: number;
