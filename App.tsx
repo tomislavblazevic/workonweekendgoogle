@@ -34,6 +34,7 @@ import { useMapStore, useLogStore, MapMarker } from './lib/state';
 import { MapController } from './lib/map-controller';
 
 const API_KEY = process.env.GEMINI_API_KEY as string | undefined;
+const USE_MOCK_API = process.env.USE_MOCK_API === 'true';
 
 const INITIAL_VIEW_PROPS = {
   center: {
@@ -55,14 +56,16 @@ function AppComponent() {
  */
   console.log('AppComponent rendering, API_KEY:', API_KEY ? 'present' : 'missing');
   
-  if (!API_KEY) {
-    console.log('No API key found, rendering missing key message');
+  // Allow running in development mock mode without a real Gemini API key.
+  if (!API_KEY && !USE_MOCK_API) {
+    console.log('No API key found and not running in mock mode, rendering missing key message');
     return (
       <div className="missing-key-container">
         <h2>Missing GEMINI_API_KEY</h2>
         <p>
-          The application requires the environment variable <code>GEMINI_API_KEY</code> to be set.
-          Please add it to your environment or a .env file and restart the dev server.
+          The application requires the environment variable <code>GEMINI_API_KEY</code> to be set
+          unless you run in mock mode. To run without a Gemini key set the environment
+          variable <code>USE_MOCK_API=true</code> and restart the dev server.
         </p>
       </div>
     );
@@ -92,7 +95,14 @@ function AppComponent() {
   // Memoize the AI client instance for one-off generateContent calls
   const aiClient = useRef<GoogleGenAI | null>(null);
   useEffect(() => {
-    aiClient.current = new GoogleGenAI({ apiKey: API_KEY });
+    // Only instantiate the real GoogleGenAI client when an API key is available
+    // and we're not in mock mode. In mock mode the app uses MockGenAILiveClient
+    // and doesn't require this client to be present.
+    if (!USE_MOCK_API && API_KEY) {
+      aiClient.current = new GoogleGenAI({ apiKey: API_KEY });
+    } else {
+      aiClient.current = null;
+    }
   }, []);
 
   // Effect: Instantiate the Geocoder once the library is loaded.
