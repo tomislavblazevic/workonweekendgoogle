@@ -1,3 +1,17 @@
+# Release: workonweekengoogle
+
+This repository contains a prepared snapshot for release under the name **workonweekengoogle**. It includes the demo app, an offline mock for the Gemini Live client, TypeScript tweaks, and the documentation necessary to run locally or publish.
+
+Quick highlights for this release:
+
+- Branch: `publish/workonweekengoogle`
+- Mock mode: `USE_MOCK_API=true` (in `.env`) — lets you run the UI without a Gemini API key
+- Real API: set `USE_MOCK_API=false` and configure `GEMINI_API_KEY` in `.env` to use the Gemini API
+- Added: `src/types/react-css.d.ts` to accept hyphenated CSS properties like `user-select` in inline styles
+- Added: improved error boundary styles and App CSS for more robust rendering
+
+See the rest of this README for setup, architecture, and developer notes.
+
 # Introduction
 
 This sample app is for illustration only. It uses both Gemini (including Grounding with Google Maps) and Google Maps Platform services.  It is your responsibility to review the relevant Terms of Service applicable to your region, and you must confirm that your integration will comply with those terms.  This sample app may show products or functionality that are not available in your region under the Terms of Service for that region.
