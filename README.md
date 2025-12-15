@@ -181,3 +181,27 @@ Here are a couple of sample prompts to get you started on creating a simple "Cit
 2.  **Prompt to create a new system instruction that uses the new feature:**
 
     > "Now, create a new system instruction for a 'City Explorer' persona. This persona should ask the user for a few places they want to see. Then, it MUST use the `frameLocations` tool to show all places on the map. It should then ask the user if they want a closer look and use the new `zoomLevel` parameter if they say yes."
+
+## Running the app locally without a Gemini API key (mock mode)
+
+If you don't have a Gemini API key or want to develop offline, the project includes a development mock for the Gemini Live client. To run the app with the mock client set the environment variable `USE_MOCK_API` to `true` before starting the dev server.
+
+On Windows PowerShell:
+
+```powershell
+$env:USE_MOCK_API = 'true'
+npm run dev
+```
+
+This runs the Vite dev server and causes the app to instantiate the `MockGenAILiveClient` so you can try the UI and tools without a real Gemini account.
+
+To run against the real Gemini API later, unset or set `USE_MOCK_API` to `false`, and provide your API key via an environment variable or `.env` (note: `.env` should be kept out of version control):
+
+```powershell
+$env:USE_MOCK_API = 'false'
+# set your key however you prefer, e.g. via PowerShell environment variable
+$env:GEMINI_API_KEY = 'your_key_here'
+npm run dev
+```
+
+Tip: Keep `.env` in your `.gitignore` and use CI/Secrets management for production deployments.
