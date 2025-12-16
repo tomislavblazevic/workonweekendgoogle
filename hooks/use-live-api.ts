@@ -74,10 +74,9 @@ export function useLiveApi({
 }): UseLiveApiResults {
  const { model } = useSettings();
  const client = useMemo<LiveClient>(() => {
-   const useMockApi = process.env.USE_MOCK_API === 'true';
-   return useMockApi
-     ? new MockGenAILiveClient(apiKey, model)
-     : new GenAILiveClient(apiKey, model);
+  // Force mock API for development/testing
+  const useMockApi = true;
+  return new MockGenAILiveClient(apiKey, model);
  }, [apiKey, model]);
 
 

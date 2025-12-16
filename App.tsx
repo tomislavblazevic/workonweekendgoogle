@@ -34,7 +34,8 @@ import { useMapStore, useLogStore, MapMarker } from './lib/state';
 import { MapController } from './lib/map-controller';
 
 const API_KEY = process.env.GEMINI_API_KEY as string | undefined;
-const USE_MOCK_API = process.env.USE_MOCK_API === 'true';
+// Force mock API for development/testing
+const USE_MOCK_API = true;
 
 const INITIAL_VIEW_PROPS = {
   center: {
