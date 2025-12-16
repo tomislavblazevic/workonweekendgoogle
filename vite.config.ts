@@ -13,7 +13,8 @@ export default defineConfig(({ mode }) => {
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.USE_MOCK_API': JSON.stringify(env.USE_MOCK_API === 'true')
+  // Inlined to true so client-side code always sees mock mode enabled
+  'process.env.USE_MOCK_API': JSON.stringify(true)
       },
       resolve: {
         alias: {

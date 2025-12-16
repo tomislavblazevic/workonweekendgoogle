@@ -186,6 +186,8 @@ Here are a couple of sample prompts to get you started on creating a simple "Cit
 
 If you don't have a Gemini API key or want to develop offline, the project includes a development mock for the Gemini Live client. To run the app with the mock client set the environment variable `USE_MOCK_API` to `true` before starting the dev server.
 
+Note: this branch currently forces mock mode in the source and build configuration (the code in `hooks/use-live-api.ts`, `App.tsx`, `lib/maps-grounding.ts`, and the Vite define are set to enable the mock client). The app will use the bundled mock client regardless of environment variables. To restore the environment-toggleable behavior, revert those files to check `process.env.USE_MOCK_API` instead of forcing `true`.
+
 On Windows PowerShell:
 
 ```powershell
